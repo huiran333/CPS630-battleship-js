@@ -2,6 +2,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('battleshipCanvas');
     const myCanvas = document.getElementById('myBattleshipCanvas');
+    let txthit = document.getElementById('myhits');
+    let txtmiss = document.getElementById('mymiss');
     const ctx = canvas.getContext('2d');
     const mctx = myCanvas.getContext('2d');
     const gridSize = 10;
@@ -9,8 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let ships = [];
     let hits = [];
     let drownship = 0;
+    let missed = 0;
     let myShips = [];
-
+    let myDrownShips = 0;
     let myTurn = false;
 
     function getRndInteger(min, max) 
@@ -18,6 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return Math.floor(Math.random() * (max - min) ) + min;
     }
 
+    function delay(milliseconds){
+        return new Promise(resolve => {
+            setTimeout(resolve, milliseconds);
+        });
+    }
 
     function randomShips()
     {        
@@ -37,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 i--;
             }
         }
+        console.log(ships);
     }
 
     function drawBoard() {
@@ -57,13 +66,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function enemyTurn()
     {
-        let gridX = getRndInteger(0,9);
-        let gridY = getRndInteger(0,9);     
+        let gridX = getRndInteger(0,10);
+        let gridY = getRndInteger(0,10);     
         var gridColor = mctx.getImageData(gridX * cellSize, gridY * cellSize, cellSize, cellSize).data;
         console.log("color:" + gridColor[1]);
         if (gridColor[1] == 251)//green
         {
             mctx.fillStyle = 'Crimson';
+            myDrownShips += 1;
             mctx.fillRect(gridX * cellSize, gridY * cellSize, cellSize, cellSize);
             myTurn = true;   
             console.log("bomed:" + gridX + "," + gridY); 
@@ -79,6 +89,11 @@ document.addEventListener('DOMContentLoaded', function() {
             mctx.fillRect(gridX * cellSize, gridY * cellSize, cellSize, cellSize);
             myTurn = true;    
             console.log("bomed missed:" + gridX + "," + gridY);    
+        }
+
+        if (myDrownShips == 5)
+        {
+            setTimeout(loseFunc,500);
         }
         
     }
@@ -98,25 +113,44 @@ document.addEventListener('DOMContentLoaded', function() {
                     ctx.fillRect(gridX * cellSize, gridY * cellSize, cellSize, cellSize);
                     hits.push([gridX, gridY]);
                     drownship+=1;
-                    if(drownship == 5)
-                    {
-                        initGame();
-                    }
+                    txthit.textContent = "Hits: " + drownship.toString() + "/5";
+                    
                 } else {
+                    missed += 1;
                     ctx.fillStyle = 'DeepSkyBlue';
+                    txtmiss.textContent = "Missed: " + missed;
                     ctx.fillRect(gridX * cellSize, gridY * cellSize, cellSize, cellSize);
                     hits.push([gridX, gridY]);
                 }
+
+                if(drownship == 5)
+                {
+                    setTimeout(winFunc,500);
+                    
+                }
+                myTurn = false;
+                setTimeout(enemyTurn,1);
+                
             }
             else
             {
                 window.alert("You already bombed here!");
             }
-            myTurn = false;
-            enemyTurn();
+            
         }        
     }
 
+    function winFunc()
+    {
+        window.alert("You win!");
+        initGame();
+    }
+
+    function loseFunc()
+    {
+        window.alert("You lose.");
+        initGame();
+    }
     function removeship(i1,i2)
     {
         const index = myShips.findIndex(ship => ship[0] === i1 && ship[1] === i2);
@@ -172,6 +206,8 @@ document.addEventListener('DOMContentLoaded', function() {
         randomShips();
         canvas.addEventListener('click', handleCanvasClick);
         myCanvas.addEventListener('click', placeShip);
+        txthit.textContent = "Hits: 0/5";
+        txtmiss.textContent = "Missed: 0";
     }
 
     initGame();
