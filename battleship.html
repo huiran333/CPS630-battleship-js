@@ -1,12 +1,50 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Battleship Game</title>
+    <style>
+        .canvasContainer {
+            display: flex;
+        }
+
+        .canvasGroup {
+            text-align: center;
+            margin-left: 70px;
+        }
+        
+        canvas {
+            border: 1px solid black;
+        }
+
+        button {
+            width: 150px; 
+            height: 40px; 
+            font-size: 16px; 
+        }
+
+        .buttonContainer {
+            margin-left: 60px;
+            margin-top: 65px;
+        }
+    </style>
 </head>
-<body>
-    <h1>Enemy Ships</h1>
-    <canvas id="battleshipCanvas" width="500" height="500"></canvas>    
+<body>  
+    <div class="canvasContainer">
+        <div class="canvasGroup">
+            <h2>Enemy Ships</h2>
+            <canvas id="battleshipCanvas" width="500" height="500"></canvas>
+        </div>
+        
+        <div class="canvasGroup">
+            <h2>My Ships</h2>
+            <canvas id="myBattleshipCanvas" width="500" height="500"></canvas>
+        </div>
+
+        <div class="buttonContainer">
+            <button id="btnStart">Start Game</button>
+        </div>
+    </div>
+
     <script src="battleship.js"></script>
 </body>
 </html>
