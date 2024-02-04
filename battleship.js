@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cellSize = canvas.width / gridSize;
     let ships = []; // Ship placement
     let hits = [];
-
+    let drawnship = 0;
 
     function getRndInteger(min, max) 
     {
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let temp = [];
             temp[0] = num1;
             temp[1] = num2;
+            console.log(temp);
             if (!ships.includes(temp))
             {
                 ships[ships.length] = temp;
@@ -56,6 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 ctx.fillStyle = 'red';
                 ctx.fillRect(gridX * cellSize, gridY * cellSize, cellSize, cellSize);
                 hits.push([gridX, gridY]);
+                console.log(drawnship);
+                drawnship+=1;
+                if(drawnship == 5)
+                {
+                    initGame();
+                }
             } else {
                 ctx.fillStyle = 'blue';
                 ctx.fillRect(gridX * cellSize, gridY * cellSize, cellSize, cellSize);
