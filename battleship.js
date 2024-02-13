@@ -2,6 +2,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('battleshipCanvas');
     const myCanvas = document.getElementById('myBattleshipCanvas');
+    const ship1 = document.getElementById("ship");
+    const dropCanvas = document.getElementById("shipCanvas");
     let txthit = document.getElementById('myhits');
     let txtmiss = document.getElementById('mymiss');
     const ctx = canvas.getContext('2d');
@@ -15,6 +17,40 @@ document.addEventListener('DOMContentLoaded', function() {
     let myShips = [];
     let myDrownShips = 0;
     let myTurn = false;
+
+    ship1.addEventListener('dragstart', function(event){        
+    })
+
+    dropCanvas.addEventListener('dragover',function(event){
+        event.preventDefault()        
+    })
+
+    dropCanvas.addEventListener('drop',function(event){
+        const rect = myCanvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const gridX = Math.floor(x / cellSize);
+        const gridY = Math.floor(y / cellSize);     
+        if (!myShips.some(myship => myship[0] === gridX && myship[1] === gridY))//false = no ship
+        {            
+            if (myShips.length < 5)
+            {
+                mctx.fillStyle = 'PaleGreen';
+                mctx.fillRect(gridX * cellSize, gridY * cellSize, cellSize, cellSize);
+                myShips.push([gridX,gridY]);
+            }            
+        }       
+
+        if (myShips.length == 5)
+        {
+            document.getElementById("btnStart").disabled = false;
+        }
+        else
+        {
+            document.getElementById("btnStart").disabled = true
+        }
+
+    })
 
     function getRndInteger(min, max) 
     {
@@ -142,12 +178,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function winFunc()
     {
+        myTurn = false;
         window.alert("You win!");
         initGame();
     }
 
     function loseFunc()
     {
+        myTurn = false;
         window.alert("You lose.");
         initGame();
     }
@@ -160,52 +198,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function placeShip(event)
-    {
-        const rect = myCanvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        const gridX = Math.floor(x / cellSize);
-        const gridY = Math.floor(y / cellSize);     
-        if (!myShips.some(myship => myship[0] === gridX && myship[1] === gridY))//false = no ship
-        {            
-            if (myShips.length < 5)
-            {
-                mctx.fillStyle = 'PaleGreen';
-                mctx.fillRect(gridX * cellSize, gridY * cellSize, cellSize, cellSize);
-                myShips.push([gridX,gridY]);
-            }            
-        }
-        else//There is ship
-        {            
-            removeship(gridX,gridY);
-            mctx.clearRect(gridX * cellSize, gridY * cellSize, cellSize, cellSize);
-            
-        }
-
-        if (myShips.length == 5)
-        {
-            document.getElementById("btnStart").disabled = false;
-        }
-        else
-        {
-            document.getElementById("btnStart").disabled = true
-        }
-       console.log(myShips);
-    }
-
     function btnStartEvent()
     {
         myTurn = true;
+        document.getElementById("btnStart").disabled = true
     }
 
-    function initGame() {
+    function initGame() {        
+        ships = [];
+        hits = [];
+        drownship = 0;
+        missed = 0;
+        myShips = [];
+        myDrownShips = 0;
+        myTurn = false;
+
+        document.getElementById("btnNew").addEventListener('click',initGame);
         document.getElementById("btnStart").disabled = true
         document.getElementById("btnStart").addEventListener('click',btnStartEvent);
         drawBoard();        
         randomShips();
         canvas.addEventListener('click', handleCanvasClick);
-        myCanvas.addEventListener('click', placeShip);
         txthit.textContent = "Hits: 0/5";
         txtmiss.textContent = "Missed: 0";
     }
