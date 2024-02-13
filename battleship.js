@@ -129,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (myDrownShips == 5)
         {
+            myDrownShips = 0;
             setTimeout(loseFunc,500);
         }
         
